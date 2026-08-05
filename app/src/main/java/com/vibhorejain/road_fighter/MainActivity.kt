@@ -1,6 +1,7 @@
 package com.vibhorejain.road_fighter
 
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
                     request: WebResourceRequest,
                     error: WebResourceError
                 ) {
+                    Log.e("WebViewError", "Error: ${error.errorCode}, Description: ${error.description}, URL: ${request.url}")
                     if (request.isForMainFrame) {
                         showOfflinePage()
                     }
@@ -37,13 +39,20 @@ class MainActivity : ComponentActivity() {
                     request: WebResourceRequest,
                     errorResponse: WebResourceResponse
                 ) {
+                    Log.e("WebViewHttpError", "Status Code: ${errorResponse.statusCode}, URL: ${request.url}")
                     if (request.isForMainFrame) {
                         showOfflinePage()
                     }
                 }
             }
 
-            loadUrl("https://www.legalchalo.com/vj/road_fighter/")
+            //loadUrl("https://www.legalchalo.com/vj/road_fighter/")
+            val gameUrl = if (BuildConfig.DEBUG) {
+                "http://10.0.2.2:8000/"
+            } else {
+                "https://www.legalchalo.com/vj/road_fighter/"
+            }
+            loadUrl(gameUrl)
         }
 
         setContentView(webView)
