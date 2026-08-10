@@ -70,7 +70,12 @@ class MainActivity : ComponentActivity() {
         }
 
         val adView = AdView(this).apply {
-            adUnitId = "ca-app-pub-3940256099942544/6300978111"
+            adUnitId = if (BuildConfig.DEBUG) {
+                "ca-app-pub-3940256099942544/6300978111" // Test ID
+            } else {
+                //"ca-app-pub-8728236576053953/5027228832" // Production ID
+                "ca-app-pub-3940256099942544/6300978111"
+            }
             setAdSize(AdSize.BANNER)
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
