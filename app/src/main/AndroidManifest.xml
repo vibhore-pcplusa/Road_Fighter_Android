@@ -13,6 +13,11 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Road_Fighter">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-8728236576053953~6723453884"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

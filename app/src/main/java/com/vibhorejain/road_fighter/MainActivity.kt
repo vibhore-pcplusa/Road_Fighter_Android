@@ -7,6 +7,12 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 
@@ -17,7 +23,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Initialize Mobile Ads SDK
+        MobileAds.initialize(this) {}
+
         webView = WebView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
             settings.allowFileAccess = true
@@ -55,7 +69,23 @@ class MainActivity : ComponentActivity() {
             loadUrl(gameUrl)
         }
 
-        setContentView(webView)
+        val adView = AdView(this).apply {
+            adUnitId = "ca-app-pub-3940256099942544/6300978111"
+            setAdSize(AdSize.BANNER)
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            loadAd(AdRequest.Builder().build())
+        }
+
+        val rootLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(webView)
+            addView(adView)
+        }
+
+        setContentView(rootLayout)
 
         onBackPressedDispatcher.addCallback(this) {
             if (webView.canGoBack()) {
