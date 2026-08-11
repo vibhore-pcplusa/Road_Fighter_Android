@@ -15,6 +15,10 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
+import android.content.Intent
+import android.content.Context
+import android.net.Uri
+import android.webkit.JavascriptInterface
 
 class MainActivity : ComponentActivity() {
 
@@ -35,6 +39,7 @@ class MainActivity : ComponentActivity() {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
             settings.allowFileAccess = true
+            addJavascriptInterface(WebAppInterface(this@MainActivity), "AndroidApp")
 
             webViewClient = object : WebViewClient() {
                 override fun onReceivedError(
@@ -57,6 +62,24 @@ class MainActivity : ComponentActivity() {
                     if (request.isForMainFrame) {
                         showOfflinePage()
                     }
+                }
+
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                    val url = request?.url?.toString() ?: return false
+                    
+                    if (url.startsWith("intent://") || url.startsWith("market://")) {
+                        try {
+                            val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
+                            if (intent != null) {
+                                startActivity(intent)
+                                return true
+                            }
+                        } catch (e: Exception) {
+                            Log.e("WebView", "Error handling intent URL: ${e.message}")
+                            return true
+                        }
+                    }
+                    return false
                 }
             }
 
@@ -159,5 +182,19 @@ class MainActivity : ComponentActivity() {
         """.trimIndent()
 
         webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null)
+    }
+}
+
+class WebAppInterface(private val mContext: Context) {
+    @JavascriptInterface
+    fun shareUrl(title: String, text: String, url: String) {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TITLE, title)
+            putExtra(Intent.EXTRA_TEXT, "$text\n$url")
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, "Share game via...")
+        mContext.startActivity(shareIntent)
     }
 }
