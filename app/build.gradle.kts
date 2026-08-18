@@ -15,8 +15,8 @@ android {
         applicationId = "com.vibhorejain.road_fighter"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
-        versionName = "8.0"
+        versionCode = 9
+        versionName = "9.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // 🏆 PASTE THIS LINE HERE:
@@ -33,6 +33,9 @@ android {
             )
             optimization {
                 enable = true
+            }
+            ndk {
+                debugSymbolLevel = "full"
             }
         }
     }
