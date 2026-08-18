@@ -23,6 +23,7 @@ import android.util.DisplayMetrics
 import android.media.AudioManager
 import android.widget.Button
 import android.view.Gravity
+import android.widget.FrameLayout
 import androidx.annotation.Keep
 
 class MainActivity : ComponentActivity() {
@@ -39,10 +40,9 @@ class MainActivity : ComponentActivity() {
         val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         webView = WebView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(
+            layoutParams = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                0,
-                1f
+                ViewGroup.LayoutParams.MATCH_PARENT
             )
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
@@ -103,14 +103,41 @@ class MainActivity : ComponentActivity() {
             loadUrl(gameUrl)
         }
 
+        val adView = AdView(this).apply {
+            adUnitId = if (BuildConfig.DEBUG) {
+                "ca-app-pub-3940256099942544/6300978111" // Test ID
+            } else {
+                //"ca-app-pub-8728236576053953/5027228832" // Production ID
+                "ca-app-pub-3940256099942544/6300978111"
+            }
+            
+            // Adaptive ad size for 100% width
+            val displayMetrics = resources.displayMetrics
+            val adWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
+
+            val adLayoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.BOTTOM
+            }
+            layoutParams = adLayoutParams
+            loadAd(AdRequest.Builder().build())
+        }
+
         val muteButton = Button(this).apply {
             text = "🔊"
-            setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            // Fix size to 50dp approx (density * 50)
+            // Set semi-transparent background (33% opacity black)
+            setBackgroundColor(android.graphics.Color.parseColor("#55000000"))
+            
             val size = (resources.displayMetrics.density * 50).toInt()
-            layoutParams = LinearLayout.LayoutParams(size, size).apply {
-                gravity = Gravity.START
-                setMargins((resources.displayMetrics.density * 100).toInt(), 0, 0, 0)
+            // Place button above the ad. Adaptive ad height is roughly 60dp.
+            val adHeight = (resources.displayMetrics.density * 60).toInt()
+            
+            layoutParams = FrameLayout.LayoutParams(size, size).apply {
+                gravity = Gravity.BOTTOM or Gravity.START
+                setMargins((resources.displayMetrics.density * 100).toInt(), 0, 0, adHeight)
             }
             setPadding(0, 0, 0, 0)
             
@@ -126,32 +153,11 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val adView = AdView(this).apply {
-            adUnitId = if (BuildConfig.DEBUG) {
-                "ca-app-pub-3940256099942544/6300978111" // Test ID
-            } else {
-                //"ca-app-pub-8728236576053953/5027228832" // Production ID
-                "ca-app-pub-3940256099942544/6300978111"
-            }
-            
-            // Adaptive ad size for 100% width
-            val displayMetrics = resources.displayMetrics
-            val adWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
-            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
-
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            loadAd(AdRequest.Builder().build())
-        }
-
-        val rootLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
+        val rootLayout = FrameLayout(this).apply {
             setBackgroundColor(android.graphics.Color.TRANSPARENT)
             addView(webView)
-            addView(muteButton)
             addView(adView)
+            addView(muteButton)
         }
 
         setContentView(rootLayout)
@@ -215,7 +221,7 @@ class MainActivity : ComponentActivity() {
               <body>
                 <div class="box">
                   <h1>You are offline</h1>
-                  <p>Please turn on Wi-Fi or mobile data and tap Refresh to continue.</p>
+                  <p>Please turn on Wi-Fi or mobile data and then close the app and reopen it.</p>
                   
                 </div>
               </body>
