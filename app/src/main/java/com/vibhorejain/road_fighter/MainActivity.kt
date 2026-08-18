@@ -110,7 +110,7 @@ class MainActivity : ComponentActivity() {
             val size = (resources.displayMetrics.density * 50).toInt()
             layoutParams = LinearLayout.LayoutParams(size, size).apply {
                 gravity = Gravity.START
-                setMargins((resources.displayMetrics.density * 10).toInt(), 0, 0, 0)
+                setMargins((resources.displayMetrics.density * 100).toInt(), 0, 0, 0)
             }
             setPadding(0, 0, 0, 0)
             
@@ -148,6 +148,7 @@ class MainActivity : ComponentActivity() {
 
         val rootLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
+            setBackgroundColor(android.graphics.Color.TRANSPARENT)
             addView(webView)
             addView(muteButton)
             addView(adView)
@@ -215,7 +216,7 @@ class MainActivity : ComponentActivity() {
                 <div class="box">
                   <h1>You are offline</h1>
                   <p>Please turn on Wi-Fi or mobile data and tap Refresh to continue.</p>
-                  <button onclick="window.location.reload()">Refresh</button>
+                  
                 </div>
               </body>
             </html>
