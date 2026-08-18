@@ -8,7 +8,6 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -17,9 +16,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import android.content.Intent
 import android.content.Context
-import android.net.Uri
 import android.webkit.JavascriptInterface
-import android.util.DisplayMetrics
 import android.media.AudioManager
 import android.widget.Button
 import android.view.Gravity
@@ -37,7 +34,7 @@ class MainActivity : ComponentActivity() {
         // Initialize Mobile Ads SDK
         MobileAds.initialize(this) {}
 
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
         webView = WebView(this).apply {
             layoutParams = FrameLayout.LayoutParams(
@@ -99,7 +96,7 @@ class MainActivity : ComponentActivity() {
             } else {
                 "https://www.legalchalo.com/vj/road_fighter/"
             }
-            Log.d("GameURL", "Loading: ${gameUrl}")
+            Log.d("GameURL", "Loading: $gameUrl")
             loadUrl(gameUrl)
         }
 
