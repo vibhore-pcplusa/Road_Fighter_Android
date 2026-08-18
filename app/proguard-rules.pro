@@ -16,3 +16,12 @@
 
 # Keep the WebAppInterface class specifically
 -keep class com.vibhorejain.road_fighter.WebAppInterface { *; }
+
+# Fix WorkManager / App Startup crash in release builds
+-keep class androidx.work.** { *; }
+-keep class androidx.startup.** { *; }
+-keep class androidx.room.** { *; }
+
+# AdMob specific rules
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.ads.** { *; }
