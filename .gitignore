@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Log files
+*.log
+
+# App Bundles (Uncomment the line below if you want to stop tracking .aab files in the future)
+# *.aab
