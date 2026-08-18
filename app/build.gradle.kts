@@ -10,13 +10,14 @@ android {
             minorApiLevel = 1
         }
     }
+    ndkVersion = "27.0.12077973" // Set a specific NDK version
 
     defaultConfig {
         applicationId = "com.vibhorejain.road_fighter"
         minSdk = 24
         targetSdk = 36
-        versionCode = 12
-        versionName = "12.0"
+        versionCode = 13
+        versionName = "13.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // 🏆 PASTE THIS LINE HERE:
