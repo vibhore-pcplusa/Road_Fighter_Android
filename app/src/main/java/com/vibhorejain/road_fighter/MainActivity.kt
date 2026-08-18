@@ -128,8 +128,15 @@ class MainActivity : ComponentActivity() {
 
         val muteButton = Button(this).apply {
             text = "🔊"
-            // Set semi-transparent background (33% opacity black)
-            setBackgroundColor(android.graphics.Color.parseColor("#55000000"))
+            // Increase icon size
+            textSize = 24f
+            // White rounded corner background
+            val shape = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+                cornerRadius = resources.displayMetrics.density * 10
+                setColor(android.graphics.Color.WHITE)
+            }
+            background = shape
             
             val size = (resources.displayMetrics.density * 50).toInt()
             // Place button above the ad. Adaptive ad height is roughly 60dp.
@@ -137,7 +144,7 @@ class MainActivity : ComponentActivity() {
             
             layoutParams = FrameLayout.LayoutParams(size, size).apply {
                 gravity = Gravity.BOTTOM or Gravity.START
-                setMargins((resources.displayMetrics.density * 100).toInt(), 0, 0, adHeight)
+                setMargins(0, 0, 0, adHeight)
             }
             setPadding(0, 0, 0, 0)
             
