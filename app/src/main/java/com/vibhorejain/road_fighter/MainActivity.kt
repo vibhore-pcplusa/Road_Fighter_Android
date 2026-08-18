@@ -19,16 +19,23 @@ import android.content.Intent
 import android.content.Context
 import android.net.Uri
 import android.webkit.JavascriptInterface
+import android.util.DisplayMetrics
+import android.media.AudioManager
+import android.widget.Button
+import android.view.Gravity
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
+    private var isMuted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Initialize Mobile Ads SDK
         MobileAds.initialize(this) {}
+
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         webView = WebView(this).apply {
             layoutParams = LinearLayout.LayoutParams(
@@ -85,11 +92,37 @@ class MainActivity : ComponentActivity() {
 
             //loadUrl("https://www.legalchalo.com/vj/road_fighter/")
             val gameUrl = if (BuildConfig.DEBUG) {
+                // If emulator, use 10.0.2.2. If real device, you MUST use your computer's IP address.
+                // To start server in localhost:8000  terminal use command-  php -S 0.0.0.0:8000
                 "http://10.0.2.2:8000/"
             } else {
                 "https://www.legalchalo.com/vj/road_fighter/"
             }
+            Log.d("GameURL", "Loading: ${gameUrl}")
             loadUrl(gameUrl)
+        }
+
+        val muteButton = Button(this).apply {
+            text = "🔊 Sound: ON"
+            setTextColor(android.graphics.Color.parseColor("#1db954"))
+            setBackgroundColor(android.graphics.Color.TRANSPARENT)
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { 
+                gravity = Gravity.CENTER_HORIZONTAL
+            }
+            
+            setOnClickListener {
+                isMuted = !isMuted
+                if (isMuted) {
+                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0)
+                    text = "🔇 Sound: OFF"
+                } else {
+                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0)
+                    text = "🔊 Sound: ON"
+                }
+            }
         }
 
         val adView = AdView(this).apply {
@@ -99,7 +132,12 @@ class MainActivity : ComponentActivity() {
                 //"ca-app-pub-8728236576053953/5027228832" // Production ID
                 "ca-app-pub-3940256099942544/6300978111"
             }
-            setAdSize(AdSize.BANNER)
+            
+            // Adaptive ad size for 100% width
+            val displayMetrics = resources.displayMetrics
+            val adWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
+
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -110,6 +148,7 @@ class MainActivity : ComponentActivity() {
         val rootLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             addView(webView)
+            addView(muteButton)
             addView(adView)
         }
 
