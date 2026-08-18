@@ -23,6 +23,7 @@ import android.util.DisplayMetrics
 import android.media.AudioManager
 import android.widget.Button
 import android.view.Gravity
+import androidx.annotation.Keep
 
 class MainActivity : ComponentActivity() {
 
@@ -224,6 +225,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Keep
 class WebAppInterface(private val mContext: Context) {
     @JavascriptInterface
     fun shareUrl(title: String, text: String, url: String) {

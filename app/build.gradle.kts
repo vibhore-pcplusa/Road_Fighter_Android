@@ -15,8 +15,8 @@ android {
         applicationId = "com.vibhorejain.road_fighter"
         minSdk = 24
         targetSdk = 36
-        versionCode = 7
-        versionName = "7.0"
+        versionCode = 8
+        versionName = "8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // 🏆 PASTE THIS LINE HERE:
@@ -25,8 +25,14 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             optimization {
-                enable = false
+                enable = true
             }
         }
     }
