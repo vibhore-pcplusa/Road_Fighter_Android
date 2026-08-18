@@ -104,24 +104,24 @@ class MainActivity : ComponentActivity() {
         }
 
         val muteButton = Button(this).apply {
-            text = "🔊 Sound: ON"
-            setTextColor(android.graphics.Color.parseColor("#1db954"))
+            text = "🔊"
             setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { 
-                gravity = Gravity.CENTER_HORIZONTAL
+            // Fix size to 50dp approx (density * 50)
+            val size = (resources.displayMetrics.density * 50).toInt()
+            layoutParams = LinearLayout.LayoutParams(size, size).apply {
+                gravity = Gravity.START
+                setMargins((resources.displayMetrics.density * 10).toInt(), 0, 0, 0)
             }
+            setPadding(0, 0, 0, 0)
             
             setOnClickListener {
                 isMuted = !isMuted
                 if (isMuted) {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0)
-                    text = "🔇 Sound: OFF"
+                    text = "🔇"
                 } else {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0)
-                    text = "🔊 Sound: ON"
+                    text = "🔊"
                 }
             }
         }
