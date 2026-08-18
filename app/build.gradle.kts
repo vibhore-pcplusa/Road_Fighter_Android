@@ -10,7 +10,7 @@ android {
             minorApiLevel = 1
         }
     }
-    ndkVersion = "27.0.12077973" // Set a specific NDK version
+    ndkVersion = "30.0.15729638" // Use the version installed on your machine
 
     defaultConfig {
         applicationId = "com.vibhorejain.road_fighter"
