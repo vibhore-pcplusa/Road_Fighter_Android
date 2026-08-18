@@ -10,14 +10,13 @@ android {
             minorApiLevel = 1
         }
     }
-    ndkVersion = "30.0.15729638" // Use the version installed on your machine
 
     defaultConfig {
         applicationId = "com.vibhorejain.road_fighter"
         minSdk = 24
         targetSdk = 36
-        versionCode = 18
-        versionName = "18.0"
+        versionCode = 22
+        versionName = "22.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // 🏆 PASTE THIS LINE HERE:
@@ -33,7 +32,7 @@ android {
                 "proguard-rules.pro"
             )
             ndk {
-                debugSymbolLevel = "FULL"
+                debugSymbolLevel = "SYMBOL_TABLE"
             }
         }
     }
