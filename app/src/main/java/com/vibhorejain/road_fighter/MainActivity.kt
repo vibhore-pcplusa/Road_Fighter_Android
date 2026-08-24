@@ -104,8 +104,8 @@ class MainActivity : ComponentActivity() {
             adUnitId = if (BuildConfig.DEBUG) {
                 "ca-app-pub-3940256099942544/6300978111" // Test ID
             } else {
-                //"ca-app-pub-8728236576053953/5027228832" // Production ID
-                "ca-app-pub-3940256099942544/6300978111"
+                "ca-app-pub-8728236576053953/5027228832" // Production ID
+                //"ca-app-pub-3940256099942544/6300978111"
             }
             
             // Adaptive ad size for 100% width
