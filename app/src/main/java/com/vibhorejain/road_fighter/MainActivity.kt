@@ -108,9 +108,16 @@ class MainActivity : ComponentActivity() {
                 //"ca-app-pub-3940256099942544/6300978111"
             }
             
-            // Adaptive ad size for 100% width
-            val displayMetrics = resources.displayMetrics
-            val adWidth = (displayMetrics.widthPixels / displayMetrics.density).toInt()
+            // Modern way to get true edge-to-edge width
+            val adWidth = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                val windowMetrics = windowManager.currentWindowMetrics
+                val bounds = windowMetrics.bounds
+                (bounds.width() / resources.displayMetrics.density).toInt()
+            } else {
+                val displayMetrics = resources.displayMetrics
+                (displayMetrics.widthPixels / displayMetrics.density).toInt()
+            }
+            
             setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
 
             val adLayoutParams = FrameLayout.LayoutParams(
