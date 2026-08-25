@@ -12,6 +12,13 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.LoadAdError
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import android.content.Intent
@@ -27,12 +34,14 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
     private var isMuted = false
+    private var mInterstitialAd: InterstitialAd? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Initialize Mobile Ads SDK
         MobileAds.initialize(this) {}
+        loadInterstitialAd()
 
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
@@ -182,6 +191,54 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun loadInterstitialAd() {
+        val adUnitId = if (BuildConfig.DEBUG) {
+            "ca-app-pub-3940256099942544/1033173712" // Test Interstitial ID
+        } else {
+            "ca-app-pub-8728236576053953/4547137674" // Production ID
+        }
+
+        val adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(this, adUnitId, adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d("AdMob", adError?.toString() ?: "Ad failed to load")
+                mInterstitialAd = null
+            }
+
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                Log.d("AdMob", "Ad was loaded.")
+                mInterstitialAd = interstitialAd
+                
+                mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d("AdMob", "Ad was dismissed.")
+                        mInterstitialAd = null
+                        loadInterstitialAd()
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                        Log.d("AdMob", "Ad failed to show: ${adError.message}")
+                        mInterstitialAd = null
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+                        Log.d("AdMob", "Ad showed fullscreen content.")
+                    }
+                }
+            }
+        })
+    }
+    
+    fun showInterstitialAd() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd?.show(this)
+        } else {
+            Log.d("AdMob", "The interstitial ad wasn't ready yet.")
+            loadInterstitialAd()
+        }
+    }
+
     private fun showOfflinePage() {
         val html = """
             <html>
@@ -255,5 +312,14 @@ class WebAppInterface(private val mContext: Context) {
         }
         val shareIntent = Intent.createChooser(sendIntent, "Share game via...")
         mContext.startActivity(shareIntent)
+    }
+
+    @JavascriptInterface
+    fun showInterstitialAd() {
+        if (mContext is MainActivity) {
+            Handler(Looper.getMainLooper()).post {
+                mContext.showInterstitialAd()
+            }
+        }
     }
 }
