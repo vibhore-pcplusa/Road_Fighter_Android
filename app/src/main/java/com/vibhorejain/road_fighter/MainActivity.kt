@@ -40,7 +40,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Configure AdMob for Families Policy & COPPA compliance (Child-Directed)
+        // Configure AdMob for Families Policy & COPPA compliance (Child-Directed / General Audience Rating G)
+        @Suppress("DEPRECATION")
         val requestConfiguration = RequestConfiguration.Builder()
             .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
             .setTagForUnderAgeOfConsent(RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE)
@@ -136,7 +137,7 @@ class MainActivity : ComponentActivity() {
                 (displayMetrics.widthPixels / displayMetrics.density).toInt()
             }
             
-            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
+            setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
 
             val adLayoutParams = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -211,7 +212,7 @@ class MainActivity : ComponentActivity() {
 
         InterstitialAd.load(this, adUnitId, adRequest, object : InterstitialAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("AdMob", adError?.toString() ?: "Ad failed to load")
+                Log.d("AdMob", adError.toString())
                 mInterstitialAd = null
             }
 
