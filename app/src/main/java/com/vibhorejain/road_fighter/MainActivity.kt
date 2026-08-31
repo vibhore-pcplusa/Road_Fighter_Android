@@ -137,7 +137,8 @@ class MainActivity : ComponentActivity() {
                 (displayMetrics.widthPixels / displayMetrics.density).toInt()
             }
             
-            setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
+            @Suppress("DEPRECATION")
+            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this@MainActivity, adWidth))
 
             val adLayoutParams = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
