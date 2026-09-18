@@ -24,12 +24,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import android.content.Intent
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.webkit.JavascriptInterface
 import android.media.AudioManager
 import android.widget.Button
 import android.view.Gravity
 import android.widget.FrameLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Keep
+import androidx.core.content.ContextCompat
 
 class MainActivity : ComponentActivity() {
 
@@ -52,6 +56,11 @@ class MainActivity : ComponentActivity() {
         // Initialize Mobile Ads SDK
         MobileAds.initialize(this) {}
         loadInterstitialAd()
+        
+        // Setup Notifications
+        NotificationHelper.createNotificationChannel(this)
+        askNotificationPermission()
+        NotificationHelper.scheduleDailyRewardNotification(this)
 
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
@@ -247,6 +256,33 @@ class MainActivity : ComponentActivity() {
         } else {
             Log.d("AdMob", "The interstitial ad wasn't ready yet.")
             loadInterstitialAd()
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d("Notification", "Notification permission granted")
+        } else {
+            Log.d("Notification", "Notification permission denied")
+        }
+    }
+
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                // Permission already granted
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                // Show educational UI to user explaining why notification is needed
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 
